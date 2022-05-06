@@ -20,6 +20,8 @@ root.render(
       redirectUri={window.location.origin}
       audience="https://dev-ae4gvrfj.us.auth0.com/api/v2/"
       scope="read:users,read:current_user,read:user_idp_tokens"
+      cacheLocation= "localstorage"
+      useRefreshTokens= {true}
     >
       <App />
     </Auth0Provider>

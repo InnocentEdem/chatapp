@@ -13,7 +13,7 @@ import PreAuthorization from './PreAuthorization';
 function WsLayer() {
  const {getAccessTokenSilently} = useAuth0()
  const [token, setToken] = useState("");
- const userMetaData = useFetchMetaData()
+//  const userMetaData = useFetchMetaData()
  const [verified, setVerified] = useState(false)
 
 
@@ -24,8 +24,7 @@ function WsLayer() {
       const newToken = await getAccessTokenSilently({
         audience: `localhost:5003`,
         scope: "read:current_user",
-      });
-      
+      });      
       setToken(newToken);      
     };
 

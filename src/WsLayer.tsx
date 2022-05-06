@@ -24,7 +24,8 @@ function WsLayer() {
       const newToken = await getAccessTokenSilently({
         audience: `localhost:5003`,
         scope: "read:current_user",
-      });      
+      });
+      
       setToken(newToken);      
     };
 
@@ -33,7 +34,7 @@ function WsLayer() {
       console.log(token);
       
         
-    const client = new W3CWebsocket(`ws://rgt-chatapp.herokuapp.com/websockets?check=${token}`);  
+    const client = new W3CWebsocket(`wss://rgt-chatapp.herokuapp.com/websockets?check=${token}`);  
       return client
     };
       
@@ -44,7 +45,7 @@ function WsLayer() {
             scope: "read:current_user",
           });
           
-          await Api("http://rgt-chatapp.herokuapp.com", accessToken).get("/authorized");
+          await Api("https://rgt-chatapp.herokuapp.com", accessToken).get("/authorized");
           setVerified(true)
         } catch (err) {}
       };

@@ -1,66 +1,55 @@
 import React, { useEffect, useState } from 'react'
 import ChatPageLayout from './ChatPageLayout'
-import { IMessageEvent, w3cwebsocket as W3CWebsocket } from "websocket";
+import {w3cwebsocket as W3CWebsocket } from "websocket";
 import { useAuth0 } from '@auth0/auth0-react';
 import Api from "./components/services/api"
 import useFetchMetaData from "./hooks/useFetchMetadata";
 import { Box } from '@mui/material';
 import PreAuthorization from './PreAuthorization';
+const Http = new XMLHttpRequest()
 
 
 
 
 function WsLayer() {
- const {getAccessTokenSilently} = useAuth0()
- const [token, setToken] = useState("");
-//  const userMetaData = useFetchMetaData()
- const [verified, setVerified] = useState(false)
+  const { getAccessTokenSilently } = useAuth0()
+  const [ready, setReady] = useState(false)
+   const [token, setToken] = useState("");
+  //  const userMetaData = useFetchMetaData()
+  //  const [verified, setVerified] = useState(false)
 
 
-
-
-
-    const show = async () => {
+  const handleLiveMessages = async () => {
+    try {
       const newToken = await getAccessTokenSilently({
-        audience: `localhost:5003`,
-        scope: "read:current_user",
+        audience: "localhost:5003",
+        scope: "read:users,read:current_user,read:user_idp_tokens",
       });
-      
-      setToken(newToken);      
-    };
+      await Api("https://rgt-chatapp.herokuapp.com/", newToken).get("/authorized");
+      setToken(newToken)
+    } catch (err) {
+      console.log(err);
+
+    }
+  }
 
 
-    const handleLiveMessages =  () => {
-      console.log(token);
+  const connect = () =>{
+
+    return new W3CWebsocket(
+      `wss://rgt-chatapp.herokuapp.com/websockets?check=${token}`,
       
-        
-    const client = new W3CWebsocket(`wss://rgt-chatapp.herokuapp.com/websockets?check=${token}`);  
-      return client
-    };
-      
-      const registerToken = async () => {        
-        try {
-          const accessToken = await getAccessTokenSilently({
-            audience: `localhost:5003`,
-            scope: "read:current_user",
-          });
-          
-          await Api("https://rgt-chatapp.herokuapp.com", accessToken).get("/authorized");
-          setVerified(true)
-        } catch (err) {}
-      };
+    );
+  }
+ 
       useEffect(()=>{
-        show();
-        registerToken()
-        // handleLiveMessages()
-
+        handleLiveMessages()
       },[])
-
 
   return (
     <>
-    {verified && <ChatPageLayout client = {handleLiveMessages()} refresh = {show}/>}
-    {!verified && <PreAuthorization/>}
+    {token && <ChatPageLayout client = {connect()}/>}
+    {!token && <PreAuthorization/>}
     </>
   )
 }

@@ -1,13 +1,17 @@
-import { Alert, AlertTitle, Box, CssBaseline, Snackbar, SnackbarOrigin } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  CircularProgress,
+  CssBaseline,
+  Snackbar,
+  SnackbarOrigin,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Chats from "./components/Chats";
-import Api from "./components/services/api";
-import { IMessageEvent, w3cwebsocket as W3CWebsocket } from "websocket";
 import { useAuth0 } from "@auth0/auth0-react";
 import ActiveChat from "./components/ActiveChat";
-import useFetchMetaData from "./hooks/useFetchMetadata";
 import Contacts from "./components/Contacts";
-import { SettingsRemoteSharp } from "@mui/icons-material";
 
 interface IMessage {
   createdAt: Date;
@@ -21,85 +25,118 @@ export interface State extends SnackbarOrigin {
   open: boolean;
 }
 
-function ChatPageLayout({ client,refresh }: { client?: any, refresh:any }) {
-  const {
-    user,
-    isAuthenticated,
-    isLoading,
-  } = useAuth0();
+function ChatPageLayout({ client }: { client?: any }) {
+  const { user } = useAuth0();
 
   const [messages, setMessages] = useState<IMessage[]>();
   const [usersOnline, setUsersOnline] = useState<string[]>();
   const sent_by = user?.email;
   const [sent_to, setSent_to] = useState<string>("");
   const [messageString, setMessageString] = useState<string>("");
-  const [activeChat, setActiveChat] = useState(0);
-  const [blockList, setBlockList] = useState<string[]|undefined>();
-  const [usersBlockedByCurrentUser, setUsersBlockedByCurrentUser] = useState<string[]>()
-  const [snackbarState, setSnackbarState] = useState({open:false, message:"",severity:0,title:""})
-  const [tries,setTries] = useState(0)
-  const [connected, setConnected] = useState(false)
+  const [blockList, setBlockList] = useState<string[] | undefined>();
+  const [usersBlockedByCurrentUser, setUsersBlockedByCurrentUser] =
+    useState<string[]>();
+  const [snackbarState, setSnackbarState] = useState({
+    open: false,
+    message: "",
+    severity: 0,
+    title: "",
+  });
+  const [sentRefresh, setSentRefresh] = useState(false)
+  const [receipt, setReceipt] = useState<string[]>([])
+  const [tries, setTries] = useState(0);
+  const [connected, setConnected] = useState(false);
 
-
-  const handleClose =()=>{
-    setSnackbarState(prev=>{return{...prev,open:false}})
-  }
-  const handleSnackAlert=(message:string,severity:number,title:string)=>{
-
-    setSnackbarState(prev=>{return{...prev,open:true,message,severity,title}})
-    setTimeout(()=>{
-      handleClose()
-    },3000)
-
-  }
+  const handleClose = () => {
+    setSnackbarState((prev) => {
+      return { ...prev, open: false };
+    });
+  };
+  const handleSnackAlert = (
+    message: string,
+    severity: number,
+    title: string
+  ) => {
+    setSnackbarState((prev) => {
+      return { ...prev, open: true, message, severity, title };
+    });
+    setTimeout(() => {
+      handleClose();
+    }, 3000);
+  };
+  console.log(client);
   
+
   client.onopen = () => {
-    setTries(5)    
-    setConnected(true)
+    console.log("connected");
+    
+    setConnected(true);
   };
   client.onmessage = (message: any) => {
-    console.log("message received");
-    console.log(message);
-
 
     const newMessage = JSON.parse(message?.data);
-    console.log(message);
+    console.log(newMessage.category);
     
     if (newMessage.category === "users_update") {
-      const filter1 = newMessage?.usersOnline.filter((e: string) => e !== user?.email)
-      const filter2 = filter1?.filter((e: string) => !blockList?.includes(e))
-      setUsersOnline(filter2)
-    } else if (newMessage.category === "block_list") {
+      const filter1 = newMessage?.usersOnline.filter(
+        (e: string) => e !== user?.email
+      );
+      const filter2 = filter1?.filter((e: string) => !blockList?.includes(e));
+      setUsersOnline(filter2);
+      console.log("users__ update");
+      
+    } 
+    else if (newMessage.category === "block_list") {
       const filtered = newMessage.blockList.map(
         (element: any) => element.blocked_by
       );
       setBlockList([...filtered]);
-    } else if(newMessage.category === "block_list_for_blocker"){
-      setUsersBlockedByCurrentUser(newMessage?.blockListForBlocker?.map((element:any)=>element.user_blocked))
-            
-    }
-     else if(newMessage.category === "do_not_sleep"){
-        console.log("Sleeping aint ma kinda thing");
-                    
-    }
-    else{
-      setMessages(newMessage);
+      console.log("blocklist__");
+      
+    } 
+    else if (newMessage.category === "block_list_for_blocker") {
+      setUsersBlockedByCurrentUser(
+        newMessage?.blockListForBlocker?.map(
+          (element: any) => element.user_blocked
+        )
+      );      
+    } 
+    else if (newMessage.category === "message") {
+        setMessages(newMessage?.content)
+
+    } 
+    else if (newMessage.category === "sent_success") {
+      console.log("sent__success");
+      if(sent_to===newMessage.category.sent_to){
+        fetchOneChat(sent_to)
+      }
+    } 
+    else if(newMessage.category==="new_message"){
+
+      if(newMessage.sent_by === sent_to){
+        fetchOneChat(newMessage.sent_by)
+      }else{
+        setReceipt(prev=>{return [...prev,newMessage.sent_by]})
+      }
+    } 
+    else if(newMessage.category==="keep_alive"){      
+      client.send(JSON.stringify({payload:user?.email, action:"keep_alive"}))
+      console.log("pong");
+      
     }
   };
 
   client.onclose = () => {
-    setConnected(false)
-    handleSnackAlert("Your connection was terminated",
-        1,"Connection Error"
-      )
-      // refresh()
-      window.location.reload()
-      
+    setConnected(false);
+    handleSnackAlert("Your connection was terminated", 1, "Connection Error");
+    // refresh()
+    window.location.reload();
   };
 
   //message utilities
   const setRecipientEmail = (value: string) => {
     setSent_to(value);
+    handleRead(value)
   };
 
   const sendNewMessage = (value: string) => {
@@ -108,10 +145,13 @@ function ChatPageLayout({ client,refresh }: { client?: any, refresh:any }) {
       const action = "send_new_message";
 
       client.send(JSON.stringify({ payload, action }));
+      fetchOneChat(sent_to)
     } else {
-      handleSnackAlert("Select a User and enter some text to start chatting",
-        1,"Message Error"
-      )
+      handleSnackAlert(
+        "Select a User and enter some text to start chatting",
+        1,
+        "Message Error"
+      );
     }
   };
 
@@ -120,6 +160,8 @@ function ChatPageLayout({ client,refresh }: { client?: any, refresh:any }) {
       setSent_to(value);
       const payload = { sent_by, sent_to: value };
       const action = "fetch_one_chat";
+      console.log(action,payload);
+      
       client.send(JSON.stringify({ payload, action }));
     }
   };
@@ -135,9 +177,7 @@ function ChatPageLayout({ client,refresh }: { client?: any, refresh:any }) {
 
     if (payload?.blocked_by && payload?.user_blocked) {
       client.send(JSON.stringify({ payload, action }));
-      handleSnackAlert(`${userEmail} blocked`,
-        0,"Block User"
-      )
+      handleSnackAlert(`${userEmail} blocked`, 0, "Block User");
     }
   };
   const unBlockUser = (userEmail: string) => {
@@ -145,56 +185,66 @@ function ChatPageLayout({ client,refresh }: { client?: any, refresh:any }) {
     const action = "unblock_user";
     if (payload?.blocked_by && payload?.user_blocked) {
       client.send(JSON.stringify({ payload, action }));
-      handleSnackAlert(`${userEmail} unblocked`,
-        0,"Unblock User"
-      )
+      handleSnackAlert(`${userEmail} unblocked`, 0, "Unblock User");
     }
   };
-
-
-  useEffect(()=>{
-    console.log("sent");
-
-    const interval = setInterval(() => {
-      client.send(
-        JSON.stringify({action:"do_not_sleep"})
-      )
+  const fetchChatOnFirstLoad = () =>{
+    setTimeout(()=>{
+        if(usersOnline?.length){
+          fetchOneChat(usersOnline[0])
+        }
     },2000)
-    return () => clearInterval(interval);
-  },[]);
+  }
+  const handleRead = (email:string)=>{
+    setReceipt(prev => prev.filter(element=> element !==email ))
+  }
+
+  // useEffect(() => {
+    // fetchChatOnFirstLoad()
+    
+
+    // const interval = setInterval(() => {
+    //   client.send(JSON.stringify({ action: "do_not_sleep" }));
+    // }, 5000);
+    // return () => clearInterval(interval);
+  // }, []);
 
   return (
     <>
-      <Box sx={{ display: "flex", position: "fixed", width: "100%" }}>
-        <Box sx={{ width: "30%" }}>
+      <Box sx={{ display: "flex", position: "fixed", width: "80vw", }}>
+        <Box sx={{ }}>
           <Contacts
+            newMessageList={receipt}
             contactList={usersOnline}
             fetchOneChat={fetchOneChat}
             setRecipientEmail={setRecipientEmail}
             blockUser={blockUser}
             blockList={usersBlockedByCurrentUser}
-            unBlockUser = {unBlockUser}
+            unBlockUser={unBlockUser}
+            newUnread={receipt}
           />
         </Box>
-        <Box sx={{ width: "70%" }}>
+        <Box sx={{width:"80%"}}>
           <ActiveChat currentUser={sent_to} />
-          <Chats
-            messages={messages}
-            messageString={messageString}
-            sendNewMessage={sendNewMessage}
-            handleSnackAlert = {handleSnackAlert}
-          />
+
+            <Chats
+              messages={messages}
+              messageString={messageString}
+              sendNewMessage={sendNewMessage}
+              handleSnackAlert={handleSnackAlert}
+            />
+
         </Box>
         <Snackbar
-        anchorOrigin={{ vertical:"top" , horizontal:"center" }}
-        open={snackbarState.open}
-        onClose={handleClose}
-      >
-        <Alert severity={snackbarState.severity === 1? "error":"success"}>
-        <AlertTitle>{snackbarState?.title}</AlertTitle>
-         {snackbarState.message}
-        </Alert>
-      </Snackbar>
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={snackbarState.open}
+          onClose={handleClose}
+        >
+          <Alert severity={snackbarState.severity === 1 ? "error" : "success"}>
+            <AlertTitle>{snackbarState?.title}</AlertTitle>
+            {snackbarState.message}
+          </Alert>
+        </Snackbar>
       </Box>
     </>
   );

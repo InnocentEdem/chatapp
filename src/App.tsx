@@ -1,5 +1,4 @@
 import React from 'react';
-import ChatPageLayout from './ChatPageLayout';
 import Login from './components/Login';
 import "./App.css"
 import { Routes,Route } from 'react-router-dom';

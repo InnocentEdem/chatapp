@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, CssBaseline, Snackbar, SnackbarOrigin } from "@mui/material";
+import { Alert, AlertTitle, Box, CircularProgress, CssBaseline, Snackbar, SnackbarOrigin } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import Chats from "./components/Chats";
 import Api from "./components/services/api";
@@ -76,14 +76,19 @@ function PreAuthorization({ client,refresh }: { client?: any, refresh?:any }) {
 
   return (
     <>
-      <Box sx={{ display: "flex", position: "fixed", width: "100%" }}>
-        <Box sx={{ width: "30%" }}>
-        <Box sx={{fontSize:"2.5rem",color:"tomato",display:"flex",width:"100%", justifyContent:"center",marginTop:"20vh",marginRight:"-900vw"}}>
-                  Authorizing.........
-                  </Box>
-    
+      <Box sx={{  display: "flex", position: "fixed", width: "80vw", }}>
+      <Box sx={{ }}>
+          <Contacts
+            contactList={usersOnline}
+            fetchOneChat={fetchOneChat}
+            setRecipientEmail={setRecipientEmail}
+            blockUser={blockUser}
+            blockList={usersBlockedByCurrentUser}
+            unBlockUser={unBlockUser}
+            Loading ={ CircularProgress}
+          />
         </Box>
-        <Box sx={{ }}>
+        <Box sx={{ width: "70%" }}>
           <ActiveChat currentUser={sent_to} />
           <Chats
             messages={messages}

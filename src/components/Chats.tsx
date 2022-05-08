@@ -1,10 +1,9 @@
-import { Box, Container, FormControl, TextField } from '@mui/material'
+import { Box, FormControl, TextField } from '@mui/material'
 import React, { useState, useRef, useEffect } from 'react'
 import SendIcon from '@mui/icons-material/Send';
 import SentChatText from './SentChatText';
 import ReceivedChatText from './ReceivedChatText';
 import { useAuth0 } from "@auth0/auth0-react";
-import { EventOutlined } from '@mui/icons-material';
 
 
 interface IMessage {
@@ -62,11 +61,9 @@ function Chats({
     <Box
       style={{
         position: "relative",
-        width: "100%",
-        height: "2vh",
         maxWidth: "100rem",
         minWidth: "40rem",
-        marginBottom:"300vh"
+        // marginBottom:"300vh"
       }}
     >
       <Box sx={{ height: "73vh", overflowY: "scroll" }}>
@@ -99,7 +96,7 @@ function Chats({
           marginRight:"10vw"
         }}
       >
-        <FormControl sx={{ width: "30vw", margin: "5rem" }}>
+        <FormControl sx={{ width: "30vw", margin: "4rem" }}>
           <TextField 
           inputRef={sendRef}
           onChange={handleMessageInput} 

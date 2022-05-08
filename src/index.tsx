@@ -18,7 +18,7 @@ root.render(
       domain="dev-ae4gvrfj.us.auth0.com"
       clientId="NepfsYdhReHgAQF38wU55VwezB7jCzsi"
       redirectUri={`${window.location.origin}/chat`}
-      audience="https://dev-ae4gvrfj.us.auth0.com/api/v2/"
+      audience="localhost:5003"
       scope="read:users,read:current_user,read:user_idp_tokens"
       cacheLocation= "localstorage"
       useRefreshTokens= {true}

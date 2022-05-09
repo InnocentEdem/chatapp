@@ -42,10 +42,7 @@ function ChatPageLayout({ client }: { client?: any }) {
     severity: 0,
     title: "",
   });
-  const [sentRefresh, setSentRefresh] = useState(false)
   const [receipt, setReceipt] = useState<string[]>([])
-  const [tries, setTries] = useState(0);
-  const [connected, setConnected] = useState(false);
 
   const handleClose = () => {
     setSnackbarState((prev) => {
@@ -63,19 +60,14 @@ function ChatPageLayout({ client }: { client?: any }) {
     setTimeout(() => {
       handleClose();
     }, 3000);
-  };
-  console.log(client);
-  
+  };  
 
   client.onopen = () => {
     console.log("connected");
-    
-    setConnected(true);
   };
   client.onmessage = (message: any) => {
 
     const newMessage = JSON.parse(message?.data);
-    console.log(newMessage.category);
     
     if (newMessage.category === "users_update") {
       const filter1 = newMessage?.usersOnline.filter(
@@ -83,16 +75,13 @@ function ChatPageLayout({ client }: { client?: any }) {
       );
       const filter2 = filter1?.filter((e: string) => !blockList?.includes(e));
       setUsersOnline(filter2);
-      console.log("users__ update");
       
     } 
     else if (newMessage.category === "block_list") {
       const filtered = newMessage.blockList.map(
         (element: any) => element.blocked_by
       );
-      setBlockList([...filtered]);
-      console.log("blocklist__");
-      
+      setBlockList([...filtered]);      
     } 
     else if (newMessage.category === "block_list_for_blocker") {
       setUsersBlockedByCurrentUser(
@@ -106,7 +95,6 @@ function ChatPageLayout({ client }: { client?: any }) {
 
     } 
     else if (newMessage.category === "sent_success") {
-      console.log("sent__success");
       if(sent_to===newMessage.category.sent_to){
         fetchOneChat(sent_to)
       }
@@ -120,9 +108,7 @@ function ChatPageLayout({ client }: { client?: any }) {
       }
     } 
     else if(newMessage.category==="keep_alive"){      
-      client.send(JSON.stringify({payload:user?.email, action:"keep_alive"}))
-      console.log("pong");
-      
+      client.send(JSON.stringify({payload:user?.email, action:"keep_alive"}))      
     }
   };
 
@@ -159,9 +145,7 @@ function ChatPageLayout({ client }: { client?: any }) {
     if (sent_by && value) {
       setSent_to(value);
       const payload = { sent_by, sent_to: value };
-      const action = "fetch_one_chat";
-      console.log(action,payload);
-      
+      const action = "fetch_one_chat";      
       client.send(JSON.stringify({ payload, action }));
     }
   };

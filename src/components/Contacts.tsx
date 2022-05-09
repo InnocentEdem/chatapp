@@ -10,15 +10,10 @@ import {
   DialogContentText,
   DialogTitle,
   Fade,
-  FormControl,
-  IconButton,
-  InputAdornment,
   Menu,
   MenuItem,
-  TextField,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import SearchIcon from "@mui/icons-material/Search";
 import { useAuth0 } from "@auth0/auth0-react";
 import contactStyle from "../styles.module.css";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -54,9 +49,7 @@ function Contacts({
   newMessageList?:any;
   newUnread?:string[]
 }) {
-  const { user, isAuthenticated } = useAuth0();
-  const [self, setSelf] = useState<IUser>();
-  const [toggleMenu, setToggleMenu] = useState(false);
+  const { user, } = useAuth0();
   const [openDialog, setOpenDialog] = React.useState(false);
   const [blockUserIndex, setBlockUserIndex] = useState<number>();
   const [modalText, setModalText] = useState({ heading: " ", text: " " });
@@ -68,6 +61,7 @@ function Contacts({
     fetchOneChat(contactList[value]);
     console.log(value);
   };
+
   const handleClickOpen = () => {
     setOpenDialog(true);
   };
@@ -126,14 +120,10 @@ function Contacts({
   };
 
   useEffect(()=>{
-
-    setTimeout(()=>{
     if(contactList?.length){
-      setRecipientEmail(contactList[0]);
       fetchOneChat(contactList[0])
     }
-    },1000)
-  })
+  },[])
   console.log(contactList,newUnread)
 
   return (

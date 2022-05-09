@@ -10,26 +10,26 @@ interface IMessage {
     updatedAt: Date;
 }
 
-function ReceivedChatText({chat}:{chat:IMessage}) {
+function ReceivedChatText({ chat }: { chat: IMessage }) {
 
 
-  return (
-      <Box sx={{width:"100%",height:"auto"}}>
-          <Box 
-          sx={{padding:"2rem",margin:"0rem",display:"flex",justifyContent:"flex-start"}}
-          >
-              <p style ={{padding:"1rem", border:"solid 1px green",margin:"0", borderRadius:"1rem 1rem 1rem 0",width:"auto", minWidth:"20rem",backgroundColor:"rgba(44, 247, 183,0.2)" }}>
-                 {chat?.msg_text}
-                 <Box sx={{display:"flex",justifyContent:"flex-end",marginTop:"2rem"}}>
-                  <Box>{new Date(chat.updatedAt).toUTCString()}</Box>
-                  </Box>
-              </p>
-            
+    return (
+        <Box sx={{ width: "100%", height: "auto" }}>
+            <Box
+                sx={{ padding: "2rem", margin: "0rem", display: "flex", justifyContent: "flex-start" }}
+            >
+                <p style={{ padding: "1rem", border: "solid 1px green", margin: "0", borderRadius: "1rem 1rem 1rem 0", width: "auto", minWidth: "20rem", fontSize:"1.6rem", backgroundColor: "rgba(44, 247, 183,0.2)" }}>
+                    {chat?.msg_text}
+                    <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: "2rem" }}>
+                        <Box sx={{fontSize:"1rem"}}>{new Date(chat.updatedAt).toUTCString()}</Box>
+                    </Box>
+                </p>
 
-          </Box>
-          
-      </Box>
-  )
+
+            </Box>
+
+        </Box>
+    )
 }
 
 export default ReceivedChatText

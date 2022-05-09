@@ -12,16 +12,16 @@ interface IMessage {
 
 function ReceivedChatText({chat}:{chat:IMessage}) {
 
- 
+
   return (
       <Box sx={{width:"100%",height:"auto"}}>
           <Box 
-          sx={{padding:"2rem",margin:"0rem",display:"flex",justifyContent:"flex-end",maxWidth:"80vw"}}
+          sx={{padding:"2rem",margin:"0rem",display:"flex",justifyContent:"flex-start"}}
           >
-              <p style ={{padding:"1rem", border:"solid 1px green",margin:"0", borderRadius:"1rem 1rem 0rem 1rem",width:"auto", minWidth:"20rem", backgroundColor:"",}}>
-                 {chat.msg_text}
+              <p style ={{padding:"1rem", border:"solid 1px green",margin:"0", borderRadius:"1rem 1rem 1rem 0",width:"auto", minWidth:"20rem", backgroundColor:"",}}>
+                 {chat?.msg_text}
                  <Box sx={{display:"flex",justifyContent:"flex-end",marginTop:"2rem"}}>
-                  <Box>{new Date(chat.createdAt).toUTCString()}</Box>
+                  <Box>{new Date(chat.updatedAt).toUTCString()}</Box>
                   </Box>
               </p>
             

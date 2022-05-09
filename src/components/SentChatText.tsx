@@ -12,23 +12,19 @@ interface IMessage {
 
 function SentChatText({chat}:{chat:IMessage}) {
 
-    const test = "come home ronnie ghjkl ghjk ghjkldfgh "
-    const time = new Date().toUTCString()
+ 
   return (
       <Box sx={{width:"100%",height:"auto"}}>
           <Box 
-          sx={{padding:"2rem",margin:"0rem",display:"flex",justifyContent:"flex-start"}}
+          sx={{padding:"2rem",margin:"0rem",display:"flex",justifyContent:"flex-end",maxWidth:"80vw"}}
           >
-              <p style ={{padding:"1rem", border:"solid 1px green",margin:"0", borderRadius:"1rem 1rem 1rem 0",width:"auto", minWidth:"20rem", backgroundColor:"",}}>
-                 {chat?.msg_text}
+              <p style ={{padding:"1rem", border:"solid 1px green",margin:"0", borderRadius:"1rem 1rem 0rem 1rem",width:"auto", minWidth:"20rem", backgroundColor:"",}}>
+                 {chat.msg_text}
                  <Box sx={{display:"flex",justifyContent:"flex-end",marginTop:"2rem"}}>
-                  <Box>{new Date(chat.updatedAt).toUTCString()}</Box>
+                  <Box>{new Date(chat.createdAt).toUTCString()}</Box>
                   </Box>
               </p>
-            
-
           </Box>
-          
       </Box>
   )
 }

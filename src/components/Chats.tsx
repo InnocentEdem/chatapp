@@ -1,8 +1,8 @@
 import { Box, FormControl, TextField } from '@mui/material'
 import React, { useState, useRef, useEffect } from 'react'
 import SendIcon from '@mui/icons-material/Send';
-import SentChatText from './SentChatText';
-import ReceivedChatText from './ReceivedChatText';
+import SentChatText from './ReceivedChatText';
+import ReceivedChatText from './SentChatText';
 import { useAuth0 } from "@auth0/auth0-react";
 
 

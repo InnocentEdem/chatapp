@@ -128,7 +128,7 @@ function Contacts({
 
   return (
     <Box>
-      <Card sx={{ margin: "5rem", height: "92vh",minWidth:"30rem" }}>
+      <Card sx={{ margin: "5rem", height: "92vh",minWidth:"30rem",fontSize:"1.6rem"  }}>
         <Box
           sx={{
             display: "flex",
@@ -193,7 +193,7 @@ function Contacts({
                   <Avatar sx={{ marginRight: "1rem" }} />
                   
                   }
-                    <span style={{ width: "60%",marginLeft:"1rem" }}>{element}</span>
+                    <span style={{ width: "60%",marginLeft:"1rem"}}>{element.split("@")[0]}</span>
                     <Box
                       onClick={handleClick}
                       sx={{ display: "flex", justifyContent: "flex-end" }}

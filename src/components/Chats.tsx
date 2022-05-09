@@ -83,11 +83,11 @@ function Chats({
           messages.map((element:IMessage)=>(
             <>
             {element?. sent_by===user?.email &&
-            (<SentChatText key = {element?.id} chat ={element}/>)
+            (<ReceivedChatText key = {element?.id} chat ={element}/>)
             }
             {
               element?. sent_by!==user?.email &&
-              (<ReceivedChatText key={element?.id} chat ={element}/>)
+              (<SentChatText key={element?.id} chat ={element}/>)
             }
             </>
           ))

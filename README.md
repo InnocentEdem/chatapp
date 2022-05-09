@@ -1,46 +1,39 @@
-# Getting Started with Create React App
+# Live chat App using the WebSocket protocol
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is the frontend of the Chat App web application, built with Typescript, React and material UI.
 
 ## Available Scripts
 
-In the project directory, you can run:
+The project was built with Create React App, using Template typescript. To start the App, run npm start
 
-### `npm start`
+## Login
+Login is implemented using the Auth0 authentication service. Storage, authentication, and authorization of login credentials handled by Auth0. The 
+authorization workflow is default. Some configration was necessary on the dashboard for the verification of app credentials.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Logout
+Logout is similarly handled by Auth0,trigered by user action, or on the expiration of the authentication token.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Chat dashboard
+The chat Dashboard includes a contact panel to the left, and the main chat area - to the right of the contact panel.
+On the top of the contact panel is the current user email id, and avatar. Any user active at time of login is shown below the current user.
+The list is scrollable. Active users are arranged column wise.
+A user in whose chat is currently open in the chat area is higlighted.
+A blue Badge is applied to the avatar of a user with a new unread message. 
 
-### `npm test`
+## Main Chat Area 
+The main chat area is to the right of the contact panel.
+The top of the main chat area has an info bar that shows the email and avatar of selected chat.
+The information bar also features a logout icon that logs out and redirects the user on click.The logout icon has a tooltip with the text logout.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Sent chats are shown to the left of the chat area, and received chats are shown to the left.
 
-### `npm run build`
+To start chatting, select a user, type some text into the input field, and click the send icon. Alternatively, press the Enter key to send.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Blocking a user
+Click on the icon to the left of the bar of the user and select the block option. That user is blocked intantly and a confirmation alert is shown.
+To unblock a user, follow the same process and select the unblock option.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).

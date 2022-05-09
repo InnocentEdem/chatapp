@@ -111,7 +111,7 @@ function Chats({
         {showEmoji && (<Box sx={{position:"absolute",bottom:"10rem",left:"12.5rem"}}>
         <Picker onEmojiClick={onEmojiClick}/>
         </Box>)}
-        <FormControl sx={{ width: "30vw", margin: "4rem",display:"flex",flexDirection:"column" }}>
+        <FormControl sx={{ width: "30vw", margin: "4rem",display:"flex",flexDirection:"column",fontSize:"1.6rem" }}>
           <TextField 
           inputRef={sendRef}
           InputProps={{

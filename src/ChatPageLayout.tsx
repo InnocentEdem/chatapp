@@ -95,9 +95,7 @@ function ChatPageLayout({ client }: { client?: any }) {
 
     } 
     else if (newMessage.category === "sent_success") {
-      if(sent_to===newMessage.category.sent_to){
-        fetchOneChat(sent_to)
-      }
+        fetchOneChat(newMessage.sent_to)
     } 
     else if(newMessage.category==="new_message"){
 
@@ -181,15 +179,10 @@ function ChatPageLayout({ client }: { client?: any }) {
     setReceipt(prev => prev.filter(element=> element !==email ))
   }
 
-  // useEffect(() => {
-    // fetchChatOnFirstLoad()
+  useEffect(() => {
+    fetchChatOnFirstLoad()
     
-
-    // const interval = setInterval(() => {
-    //   client.send(JSON.stringify({ action: "do_not_sleep" }));
-    // }, 5000);
-    // return () => clearInterval(interval);
-  // }, []);
+  }, []);
 
   return (
     <>

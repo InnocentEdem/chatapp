@@ -113,9 +113,7 @@ function ChatPageLayout({ client }: { client?: any }) {
   };
 
   client.onclose = () => {
-    setConnected(false);
     handleSnackAlert("Your connection was terminated", 1, "Connection Error");
-    // refresh()
     window.location.reload();
   };
 

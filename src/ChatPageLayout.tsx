@@ -12,6 +12,8 @@ import Chats from "./components/Chats";
 import { useAuth0 } from "@auth0/auth0-react";
 import ActiveChat from "./components/ActiveChat";
 import Contacts from "./components/Contacts";
+import addNotification from 'react-push-notification';
+
 
 interface IMessage {
   createdAt: Date;
@@ -42,6 +44,15 @@ function ChatPageLayout({ client }: { client?: any }) {
     severity: 0,
     title: "",
   });
+  const pushNotification = (sender:string) => {
+    addNotification({
+        title: 'Warning',
+        subtitle: 'This is a subtitle',
+        message: `New message from ${sender} `,
+        theme: 'darkblue',
+        native: true // when using native, your OS will handle theming.
+    });
+};
   const [receipt, setReceipt] = useState<string[]>([])
 
   const handleClose = () => {
@@ -103,6 +114,7 @@ function ChatPageLayout({ client }: { client?: any }) {
         fetchOneChat(newMessage.sent_by)
       }else{
         setReceipt(prev=>{return [...prev,newMessage.sent_by]})
+        pushNotification(newMessage.sent_by)
       }
     } 
     else if(newMessage.category==="keep_alive"){      

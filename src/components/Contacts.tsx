@@ -199,7 +199,7 @@ function Contacts({
 
         {!Loading && 
           (<Box sx={{ height: "100vh", overflowY: "scroll" }}>
-            <Card elevation={0} sx={{ margin: "0rem 1rem" }}>
+            <Card elevation={0} sx={{ margin: "0rem 1rem",marginBottom:"50vh" }}>
               {displaying?.length ? (
                 displaying.map((element: any, index: number) => (
                   <Box

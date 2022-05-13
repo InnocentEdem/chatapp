@@ -12,11 +12,22 @@ import {
   Fade,
   Menu,
   MenuItem,
+  styled,
+  ButtonProps
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import contactStyle from "../styles.module.css";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { teal } from '@mui/material/colors';
+
+const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
+  color: theme.palette.getContrastText(teal[500]),
+  backgroundColor: teal[500],
+  '&:hover': {
+    backgroundColor: teal[700],
+  },
+}));
 
 interface IUser {
   nickname: string;
@@ -26,6 +37,12 @@ interface IUser {
   email: string;
   email_verified: boolean;
   sub: string;
+}
+interface IAllUsers {
+  createdAt: string,
+  email: string,
+  id: number,
+  updatedAt: string,
 }
 
 function Contacts({
@@ -37,7 +54,8 @@ function Contacts({
   unBlockUser,
   Loading,
   newMessageList,
-  newUnread
+  newUnread,
+  allUsers
 }: {
   contactList?: any;
   fetchOneChat: any;
@@ -47,12 +65,15 @@ function Contacts({
   unBlockUser: any;
   Loading?:any;
   newMessageList?:any;
-  newUnread?:string[]
+  newUnread?:string[];
+  allUsers?:any;
 }) {
   const { user, } = useAuth0();
   const [openDialog, setOpenDialog] = React.useState(false);
   const [blockUserIndex, setBlockUserIndex] = useState<number>();
   const [modalText, setModalText] = useState({ heading: " ", text: " " });
+  const [contactsType, setContactsType] = useState("online")
+  const [displaying,setDisplaying] = useState<any[]>([])
 
   const [activeContact, setActiveContact] = useState(0);
   const setStyle = (value: number) => {
@@ -107,9 +128,9 @@ function Contacts({
   const handleBlockUserAccept = () => {
     if (typeof blockUserIndex === "number") {
       if (blockList?.includes(contactList[blockUserIndex])) {
-        unBlockUser(contactList[blockUserIndex]);
+        unBlockUser(contactList?.[blockUserIndex]);
       } else {
-        blockUser(contactList[blockUserIndex]);
+        blockUser(contactList?.[blockUserIndex]);
       }
       setTimeout(() => {
         window.location.reload();
@@ -118,13 +139,23 @@ function Contacts({
 
     handleCloseDialog();
   };
+  const handleSetContactsType = (value:string)=>{
+    setContactsType(value)
+    setDisplaying(value==="online"? contactList: allUsers)
+  }
+  const handleAllUsers =(value:number)=>{
+    setActiveContact(value);
+    setRecipientEmail(displaying[value]?.email);
+    fetchOneChat(displaying[value]?.email);
+    console.log(value);
+  }
 
   useEffect(()=>{
     if(contactList?.length){
-      fetchOneChat(contactList[0])
+      // fetchOneChat(contactList[0])
     }
   },[])
-  console.log(contactList,newUnread)
+  // console.log(contactList,newUnread)
 
   return (
     <Box>
@@ -151,15 +182,26 @@ function Contacts({
             }}
           ></hr>
         </Box>
+        <Box sx={{display:"flex", justifyContent:"space-around"}}>
+          <ColorButton variant={"contained"} sx={{width:"12rem"}} onClick={()=>handleSetContactsType("online")}>
+            Users Online
+          </ColorButton>
+          <ColorButton variant={"contained"} sx={{width:"12rem"}} onClick={()=>handleSetContactsType("all_users")}>
+            All Users
+          </ColorButton>
+        </Box>
         <Box sx={{ textAlign: "center", margin: "5rem 0 1rem 0rem" }}>
-          <b>Users Online</b>
+          {
+            contactsType==="online" ? <b>Users Online</b> : <b>All Users</b>
+          }
+         
         </Box>
 
         {!Loading && 
           (<Box sx={{ height: "100vh", overflowY: "scroll" }}>
             <Card elevation={0} sx={{ margin: "0rem 1rem" }}>
-              {contactList?.length ? (
-                contactList.map((element: any, index: number) => (
+              {displaying?.length ? (
+                displaying.map((element: any, index: number) => (
                   <Box
                   
                     className={
@@ -167,7 +209,7 @@ function Contacts({
                         ? contactStyle.activeclass
                         : contactStyle.inactiveclass
                     }
-                    onClick={() => setStyle(index)}
+                    onClick={contactsType==="online"? () => setStyle(index): ()=>handleAllUsers(index)}
                     sx={{
                       display: "flex",
                       justifyContent: "space_between",
@@ -180,7 +222,7 @@ function Contacts({
                     }}
                     key = {element?.email}
                   > 
-                  {newUnread && newUnread?.includes(element) ?
+                  {newUnread && contactsType==="online" && newUnread?.includes(element) ?
                   <Badge 
                   anchorOrigin={{
                     vertical: 'top',
@@ -193,7 +235,7 @@ function Contacts({
                   <Avatar sx={{ marginRight: "1rem" }} />
                   
                   }
-                    <span style={{ width: "60%",marginLeft:"1rem"}}>{element.split("@")[0]}</span>
+                    <span style={{ width: "60%",marginLeft:"1rem"}}>{contactsType==="online"?element.split("@")[0] :element?.email.split("@")[0]}</span>
                     <Box
                       onClick={handleClick}
                       sx={{ display: "flex", justifyContent: "flex-end" }}

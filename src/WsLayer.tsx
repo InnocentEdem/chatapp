@@ -25,7 +25,7 @@ function WsLayer() {
         audience: "localhost:5003",
         scope: "read:users,read:current_user,read:user_idp_tokens",
       });
-      await Api("https://rgt-chatapp.herokuapp.com/", newToken).get("/authorized");
+      await Api("http://localhost:5003/", newToken).get("/authorized");
       setToken(newToken)
     } catch (err) {
       console.log(err);
@@ -37,7 +37,7 @@ function WsLayer() {
   const connect = () =>{
 
     return new W3CWebsocket(
-      `wss://rgt-chatapp.herokuapp.com/websockets?check=${token}`,
+      `ws://localhost:5003/websockets?check=${token}`,
       
     );
   }

@@ -44,6 +44,7 @@ function ChatPageLayout({ client }: { client?: any }) {
     severity: 0,
     title: "",
   });
+  const [allUsers, setAllUsers] = useState([])
   const pushNotification = (sender:string) => {
     addNotification({
         title: 'Warning',
@@ -107,7 +108,12 @@ function ChatPageLayout({ client }: { client?: any }) {
     } 
     else if (newMessage.category === "sent_success") {
         fetchOneChat(newMessage.sent_to)
-    } 
+    }
+    else if(newMessage.category==="fetch_all_users"){
+      console.log(newMessage?.allUsers)
+      const filteredUsers = newMessage?.allUsers.filter((element:any)=>element?.email !== user?.email && !blockList?.includes(element?.email) )
+      setAllUsers(filteredUsers)
+    }
     else if(newMessage.category==="new_message"){
 
       if(newMessage.sent_by === sent_to){
@@ -160,8 +166,12 @@ function ChatPageLayout({ client }: { client?: any }) {
   const fetchAllUserMessages = () => {
     const payload = { email: sent_by };
     const action = "fetch_all_user_messages";
-    client.send({ payload, action });
+    client.send(JSON.stringify({ payload, action }));
   };
+  const fetchAllUsers = ()=>{
+    const action = "fetch_all_users"
+    client.send(JSON.stringify({action}))
+  }
 
   const blockUser = (userEmail: string) => {
     const payload = { blocked_by: user?.email, user_blocked: userEmail };
@@ -209,6 +219,7 @@ function ChatPageLayout({ client }: { client?: any }) {
             blockList={usersBlockedByCurrentUser}
             unBlockUser={unBlockUser}
             newUnread={receipt}
+            allUsers = {allUsers}
           />
         </Box>
         <Box sx={{width:"80%"}}>

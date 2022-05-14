@@ -44,6 +44,7 @@ function ChatPageLayout({ client }: { client?: any }) {
     severity: 0,
     title: "",
   });
+  const [showChat,setShowChat] = useState(false)
   const [allUsers, setAllUsers] = useState([])
   const pushNotification = (sender:string) => {
     addNotification({
@@ -73,6 +74,13 @@ function ChatPageLayout({ client }: { client?: any }) {
       handleClose();
     }, 3000);
   };  
+
+  const handleSetshowChat = () =>{
+    console.log(showChat);
+    
+    setShowChat(!showChat)
+  
+  }
 
   client.onopen = () => {
     console.log("connected");
@@ -208,7 +216,7 @@ function ChatPageLayout({ client }: { client?: any }) {
 
   return (
     <>
-      <Box sx={{ display: "flex", position: "fixed", width: "80vw", }}>
+      <Box sx={{ display: "flex", position: "fixed", width: "100vw", }}>
         <Box sx={{ }}>
           <Contacts
             newMessageList={receipt}
@@ -220,16 +228,21 @@ function ChatPageLayout({ client }: { client?: any }) {
             unBlockUser={unBlockUser}
             newUnread={receipt}
             allUsers = {allUsers}
+            showChat = {showChat}
+            handleMobileView = {handleSetshowChat}
           />
         </Box>
-        <Box sx={{width:"80%"}}>
-          <ActiveChat currentUser={sent_to} />
+        <Box sx={{width:"100%"}}>
+          <ActiveChat currentUser={sent_to} 
+            handleMobileView = {handleSetshowChat}
+          />
 
             <Chats
               messages={messages}
               messageString={messageString}
               sendNewMessage={sendNewMessage}
               handleSnackAlert={handleSnackAlert}
+              showChat = {showChat}
             />
 
         </Box>

@@ -2,8 +2,10 @@ import { Avatar, Box, Card, SvgIcon, Tooltip } from "@mui/material";
 import React from "react";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useAuth0 } from "@auth0/auth0-react";
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
+import styles from "./styles.module.css"
 
-function ActiveChat({ currentUser }: { currentUser: string }) {
+function ActiveChat({ currentUser,handleMobileView}: { currentUser: string, handleMobileView?:any }) {
   const { logout } = useAuth0();
   return (
     <>
@@ -24,20 +26,38 @@ function ActiveChat({ currentUser }: { currentUser: string }) {
           <Avatar sx={{ marginRight: "1rem" }} />
           <p>{currentUser}</p>
         </Box>
-        <Tooltip placement="top" title={"Logout"}>
+        <Tooltip placement="top" title={"Logout"}
+          className={styles.logout}
+
+        >
           <SvgIcon
             onClick={() => logout({ returnTo: window.location.origin })}
             sx={{
               cursor: "pointer",
               color: "f7f7f7",
               margin: "0rem 10rem",
-              fontSize: "2rem",
-              border: "solid",
+              fontSize: "4rem",
               borderRadius: "50%",
               padding: "0.4rem",
             }}
           >
             <LogoutIcon />
+          </SvgIcon>
+        </Tooltip>
+        <Tooltip placement="top" title={"Back"}
+          className={styles.chat_mobile}
+        >
+          <SvgIcon
+            onClick={() => handleMobileView()}
+            sx={{
+              cursor: "pointer",
+              color: "f7f7f7",
+              margin: "0rem 10rem",
+              fontSize: "5rem",
+              padding: "0.4rem",
+            }}
+          >
+          <KeyboardDoubleArrowLeftIcon />
           </SvgIcon>
         </Tooltip>
       </Card>

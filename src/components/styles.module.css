@@ -1,0 +1,40 @@
+
+.mobile{
+    /* display:none; */
+}
+.non_mobile{
+    display: block;
+}
+.chat_mobile{
+    display:none !important;
+}
+.chat_nonmobile{
+    display:block;
+}
+.chat_mobile_off{
+    display: none;
+}
+
+@media only screen and (max-width:1100px){
+    .non_mobile{
+        display:none !important;
+    }
+    .mobile{
+        display:block !important;
+    }
+    .chat_mobile{
+        display:block !important;
+    }
+    .chat_mobile_off{
+        display: none;
+    }
+    .chat_nonmobile{
+        display:none;
+    }
+}
+@media only screen and (max-width:1100px){
+
+    .logout{
+        display: none !important;
+    }
+}

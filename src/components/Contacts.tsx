@@ -20,6 +20,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import contactStyle from "../styles.module.css";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { teal } from '@mui/material/colors';
+import styles from "./styles.module.css"
 
 const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
   color: theme.palette.getContrastText(teal[500]),
@@ -55,7 +56,9 @@ function Contacts({
   Loading,
   newMessageList,
   newUnread,
-  allUsers
+  allUsers,
+  showChat,
+  handleMobileView
 }: {
   contactList?: any;
   fetchOneChat: any;
@@ -67,19 +70,24 @@ function Contacts({
   newMessageList?:any;
   newUnread?:string[];
   allUsers?:any;
+  showChat?:boolean;
+  handleMobileView?:any;
 }) {
   const { user, } = useAuth0();
   const [openDialog, setOpenDialog] = React.useState(false);
   const [blockUserIndex, setBlockUserIndex] = useState<number>();
   const [modalText, setModalText] = useState({ heading: " ", text: " " });
-  const [contactsType, setContactsType] = useState("online")
-  const [displaying,setDisplaying] = useState<any[]>([])
+  const [contactsType, setContactsType] = useState("online");
+  const [displaying,setDisplaying] = useState<any[]>([]);
+  console.log(styles);
+  
 
   const [activeContact, setActiveContact] = useState(0);
   const setStyle = (value: number) => {
     setActiveContact(value);
     setRecipientEmail(contactList[value]);
     fetchOneChat(contactList[value]);
+    handleMobileView()
     console.log(value);
   };
 
@@ -146,6 +154,9 @@ function Contacts({
   const handleAllUsers =(value:number)=>{
     setActiveContact(value);
     setRecipientEmail(displaying[value]?.email);
+    handleMobileView()
+    console.log(showChat,"&&&&&&&&&&&&&");
+    
     fetchOneChat(displaying[value]?.email);
     console.log(value);
   }
@@ -158,7 +169,7 @@ function Contacts({
   // console.log(contactList,newUnread)
 
   return (
-    <Box>
+    <Box className={!showChat? styles.mobile : styles.non_mobile }>
       <Card sx={{ margin: "5rem", height: "92vh",minWidth:"30rem",fontSize:"1.6rem"  }}>
         <Box
           sx={{

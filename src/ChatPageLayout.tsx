@@ -57,7 +57,7 @@ function ChatPageLayout({ client }: { client?: any }) {
     console.log(sender);
     
 };
-  const [receipt, setReceipt] = useState<string[]>([])
+  const [receipt, setReceipt] = useState({})
 
   const handleClose = () => {
     setSnackbarState((prev) => {
@@ -124,13 +124,19 @@ function ChatPageLayout({ client }: { client?: any }) {
       const filteredUsers = newMessage?.allUsers.filter((element:any)=>element?.email !== user?.email && !blockList?.includes(element?.email) )
       setAllUsers(filteredUsers)
     }
+    else if(newMessage.category==="fetch_new_messages"){
+      const sorted:any = {}
+      console.log(newMessage);
+      
+      newMessage.newUserMessagesOnLogin.forEach((element:any)=>{
+        sorted[element.sent_by as string] += 1
+      })
+      setReceipt(sorted)
+    }
     else if(newMessage.category==="new_message"){
 
       if(newMessage.sent_by === sent_to){
         fetchOneChat(newMessage.sent_by)
-      }else{
-        setReceipt(prev=>{return [...prev,newMessage.sent_by]})
-        pushNotification(newMessage.sent_by)
       }
     } 
     else if(newMessage.category==="keep_alive"){      
@@ -146,7 +152,6 @@ function ChatPageLayout({ client }: { client?: any }) {
   //message utilities
   const setRecipientEmail = (value: string) => {
     setSent_to(value);
-    handleRead(value)
   };
 
   const sendNewMessage = (value: string) => {
@@ -172,6 +177,7 @@ function ChatPageLayout({ client }: { client?: any }) {
       const action = "fetch_one_chat";      
       client.send(JSON.stringify({ payload, action }));
     }
+    confirmRead(value)
   };
   const fetchAllUserMessages = () => {
     const payload = { email: sent_by };
@@ -181,6 +187,21 @@ function ChatPageLayout({ client }: { client?: any }) {
   const fetchAllUsers = ()=>{
     const action = "fetch_all_users"
     client.send(JSON.stringify({action}))
+  }
+
+  const confirmRead =(email:any)=>{
+    const action = "remove_from_new_messages";
+    const payload = {sent_by:email,sent_to:user?.email};
+    if(payload && email){
+      client.send(JSON.stringify({payload,action}))
+    }
+    try{
+      setReceipt((prev:any)=>{return {...prev,[ prev[email]]:0}})
+    }catch(err){
+      console.log(err);
+      
+    }
+
   }
 
   const blockUser = (userEmail: string) => {
@@ -207,9 +228,6 @@ function ChatPageLayout({ client }: { client?: any }) {
         }
     },2000)
   }
-  const handleRead = (email:string)=>{
-    setReceipt(prev => prev.filter(element=> element !==email ))
-  }
 
   useEffect(() => {
     fetchChatOnFirstLoad()
@@ -228,7 +246,6 @@ function ChatPageLayout({ client }: { client?: any }) {
             blockUser={blockUser}
             blockList={usersBlockedByCurrentUser}
             unBlockUser={unBlockUser}
-            newUnread={receipt}
             allUsers = {allUsers}
             showChat = {showChat}
             handleMobileView = {handleSetshowChat}

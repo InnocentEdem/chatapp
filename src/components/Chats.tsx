@@ -147,9 +147,8 @@ function Chats({
         style={{
           position: "relative",
           minWidth: "40rem",
-          border:"solid",
-          width:"100%"
-          // marginBottom:"300vh"
+          width:"100%",
+          marginBottom:"300vh"
         }}
       >
         <Box sx={{ height: "73vh", overflowY: "scroll"} }>

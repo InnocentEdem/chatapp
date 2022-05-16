@@ -67,11 +67,10 @@ function Chats({
   
  useEffect(()=>{
    const scroll =()=>{
-    if(chatRef.current){
-      chatRef.current.scrollIntoView({ block: "end", inline: "nearest"})
-    }
-    else if(chatRefMobile.current){
-      chatRefMobile.current.scrollIntoView({ block: "end", inline: "nearest"})
+    if(chatRef.current|| chatRefMobile.current){
+      chatRef.current && chatRef.current.scrollIntoView({ block: "end", inline: "nearest"})
+      chatRefMobile.current && chatRefMobile.current.scrollIntoView({ block: "end", inline: "nearest"})
+
     }
    }
    scroll()

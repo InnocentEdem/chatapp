@@ -37,7 +37,9 @@ function Chats({
   const [messageValue, setMessageValue] = useState("")
   const {user} = useAuth0()
   const chatRef = useRef<HTMLDivElement>(null)
+  const chatRefMobile = useRef<HTMLDivElement>(null)
   const sendRef = useRef(null)
+  const sendRefMobile = useRef(null)
   const [showEmoji, setShowEmoji] = useState(false)
 
 
@@ -67,6 +69,9 @@ function Chats({
    const scroll =()=>{
     if(chatRef.current){
       chatRef.current.scrollIntoView({ block: "end", inline: "nearest"})
+    }
+    else if(chatRefMobile.current){
+      chatRefMobile.current.scrollIntoView({ block: "end", inline: "nearest"})
     }
    }
    scroll()
@@ -152,7 +157,7 @@ function Chats({
         }}
       >
         <Box sx={{ height: "73vh", overflowY: "scroll"} }>
-          <div ref={chatRef}>
+          <div ref={chatRefMobile}>
           {messages?.length &&
             messages.map((element:IMessage)=>(
               <>
@@ -187,7 +192,7 @@ function Chats({
           </Box>)}
           <FormControl sx={{ width: "30vw", margin: "4rem",display:"flex",flexDirection:"column",fontSize:"1.6rem" }}>
             <TextField 
-            inputRef={sendRef}
+            inputRef={sendRefMobile}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">

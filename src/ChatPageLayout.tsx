@@ -54,6 +54,8 @@ function ChatPageLayout({ client }: { client?: any }) {
         theme: 'darkblue',
         native: true // when using native, your OS will handle theming.
     });
+    console.log(sender);
+    
 };
   const [receipt, setReceipt] = useState<string[]>([])
 

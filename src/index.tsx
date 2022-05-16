@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 // import Auth0ProviderWithHistory from './auth/auth0-provider-with-history';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
+import { Notifications } from 'react-push-notification';
 
 
 
@@ -24,6 +25,7 @@ root.render(
       cacheLocation= "localstorage"
       useRefreshTokens= {true}
     >
+      <Notifications />
       <App />
     </Auth0Provider>
     </Router>

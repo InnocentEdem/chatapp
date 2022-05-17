@@ -20,7 +20,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import contactStyle from "../styles.module.css";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { teal } from '@mui/material/colors';
-import styles from "./styles.module.css"
+import styles from "./styles.module.css";
+import { flushSync } from "react-dom";
 
 const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
   color: theme.palette.getContrastText(teal[500]),
@@ -78,7 +79,8 @@ function Contacts({
   const [blockUserIndex, setBlockUserIndex] = useState<number>();
   const [modalText, setModalText] = useState({ heading: " ", text: " " });
   const [contactsType, setContactsType] = useState("online");
-  const [displaying,setDisplaying] = useState<any[]>( contactList);
+  const [displaying,setDisplaying] = useState<any[]>([]);
+  
   
 
   const [activeContact, setActiveContact] = useState(0);
@@ -87,7 +89,6 @@ function Contacts({
     setRecipientEmail(contactList[value]);
     fetchOneChat(contactList[value]);
     handleMobileView()
-    console.log(value);
   };
 
   const handleClickOpen = () => {
@@ -148,7 +149,10 @@ function Contacts({
   };
   const handleSetContactsType = (value:string)=>{
     setContactsType(value)
-    setDisplaying(value==="online"? contactList: allUsers)
+    flushSync(()=>{
+      setDisplaying(value==="online"? contactList: allUsers)
+    })
+    
   }
   const handleAllUsers =(value:number)=>{
     setActiveContact(value);
@@ -158,15 +162,17 @@ function Contacts({
     console.log(value);
   }
 
-  useEffect(()=>{
-    setDisplaying(contactList)
-
-  },[])
-  // console.log(contactList,newUnread)
 
   return (
-    <Box className={!showChat? styles.mobile : styles.non_mobile }>
-      <Card sx={{ margin: "5rem", height: "92vh",minWidth:"30rem",fontSize:"1.6rem"  }}>
+    <Box className={!showChat ? styles.mobile : styles.non_mobile}>
+      <Card
+        sx={{
+          margin: "5rem",
+          height: "92vh",
+          minWidth: "30rem",
+          fontSize: "1.6rem",
+        }}
+      >
         <Box
           sx={{
             display: "flex",
@@ -189,34 +195,45 @@ function Contacts({
             }}
           ></hr>
         </Box>
-        <Box sx={{display:"flex", justifyContent:"space-around"}}>
-          <ColorButton variant={"contained"} sx={{width:"12rem"}} onClick={()=>handleSetContactsType("online")}>
+        <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+          <ColorButton
+            variant={"contained"}
+            sx={{ width: "12rem" }}
+            onClick={() => handleSetContactsType("online")}
+          >
             Users Online
           </ColorButton>
-          <ColorButton variant={"contained"} sx={{width:"12rem"}} onClick={()=>handleSetContactsType("all_users")}>
+          <ColorButton
+            variant={"contained"}
+            sx={{ width: "12rem" }}
+            onClick={() => handleSetContactsType("all_users")}
+          >
             All Users
           </ColorButton>
         </Box>
         <Box sx={{ textAlign: "center", margin: "5rem 0 1rem 0rem" }}>
-          {
-            contactsType==="online" ? <b>Users Online</b> : <b>All Users</b>
-          }
-         
+          {contactsType === "online" ? <b>Users Online</b> : <b>All Users</b>}
         </Box>
 
-        {!Loading && 
-          (<Box sx={{ height: "100vh", overflowY: "scroll" }}>
-            <Card elevation={0} sx={{ margin: "0rem 1rem",marginBottom:"50vh" }}>
-              {displaying?.length ? (
-                displaying.map((element: any, index: number) => (
+        {!Loading && contactsType === "online" && (
+          <Box sx={{ height: "100vh", overflowY: "scroll" }}>
+            <Card
+              elevation={0}
+              sx={{ margin: "0rem 1rem", marginBottom: "50vh" }}
+            >
+              {contactList?.length ? (
+                contactList.map((element: any, index: number) => (
                   <Box
-                  
                     className={
                       index === activeContact
                         ? contactStyle.activeclass
                         : contactStyle.inactiveclass
                     }
-                    onClick={contactsType==="online"? () => setStyle(index): ()=>handleAllUsers(index)}
+                    onClick={
+                      contactsType === "online"
+                        ? () => setStyle(index)
+                        : () => handleAllUsers(index)
+                    }
                     sx={{
                       display: "flex",
                       justifyContent: "space_between",
@@ -227,22 +244,30 @@ function Contacts({
                       cursor: "pointer",
                       minWidth: "25rem",
                     }}
-                    key = {element?.email}
-                  > 
-                  {newUnread && contactsType==="online" && newUnread?.includes(element) ?
-                  <Badge 
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  badgeContent={"+"} color="info" sx={{width:"4rem"}}>
-                     <Avatar sx={{ marginRight: "5rem" }} />
-                  </Badge>
-                  : 
-                  <Avatar sx={{ marginRight: "1rem" }} />
-                  
-                  }
-                    <span style={{ width: "60%",marginLeft:"1rem"}}>{contactsType==="online"?element.split("@")[0] :element?.email.split("@")[0]}</span>
+                    key={element?.email}
+                  >
+                    {newUnread &&
+                    contactsType === "online" &&
+                    newUnread?.includes(element) ? (
+                      <Badge
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        badgeContent={"+"}
+                        color="info"
+                        sx={{ width: "4rem" }}
+                      >
+                        <Avatar sx={{ marginRight: "5rem" }} />
+                      </Badge>
+                    ) : (
+                      <Avatar sx={{ marginRight: "1rem" }} />
+                    )}
+                    <span style={{ width: "60%", marginLeft: "1rem" }}>
+                      {contactsType === "online"
+                        ? element.split("@")[0]
+                        : element?.email.split("@")[0]}
+                    </span>
                     <Box
                       onClick={handleClick}
                       sx={{ display: "flex", justifyContent: "flex-end" }}
@@ -273,8 +298,98 @@ function Contacts({
                 <Box sx={{ textAlign: "center" }}>No users online yet...</Box>
               )}
             </Card>
-          </Box>)}
-          {Loading && <Box sx={{ display:"flex",justifyContent:"center"}}><Loading size ={18}/></Box>}
+          </Box>
+        )}
+
+        {!Loading && contactsType !== "online" && (
+          <Box sx={{ height: "100vh", overflowY: "scroll" }}>
+            <Card
+              elevation={0}
+              sx={{ margin: "0rem 1rem", marginBottom: "50vh" }}
+            >
+              {allUsers?.length
+                ? allUsers.map((element: any, index: number) => (
+                    <Box
+                      className={
+                        index === activeContact
+                          ? contactStyle.activeclass
+                          : contactStyle.inactiveclass
+                      }
+                      onClick={
+                        contactsType === "online"
+                          ? () => setStyle(index)
+                          : () => handleAllUsers(index)
+                      }
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space_between",
+                        alignItems: "center",
+                        margin: "2rem",
+                        padding: "0.8rem",
+                        borderRadius: "15px",
+                        cursor: "pointer",
+                        minWidth: "25rem",
+                      }}
+                      key={element?.email}
+                    >
+                      {newUnread &&
+                      contactsType === "online" &&
+                      newUnread?.includes(element) ? (
+                        <Badge
+                          anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                          }}
+                          badgeContent={"+"}
+                          color="info"
+                          sx={{ width: "4rem" }}
+                        >
+                          <Avatar sx={{ marginRight: "5rem" }} />
+                        </Badge>
+                      ) : (
+                        <Avatar sx={{ marginRight: "1rem" }} />
+                      )}
+                      <span style={{ width: "60%", marginLeft: "1rem" }}>
+                        {contactsType === "online"
+                          ? element.split("@")[0]
+                          : element?.email.split("@")[0]}
+                      </span>
+                      <Box
+                        onClick={handleClick}
+                        sx={{ display: "flex", justifyContent: "flex-end" }}
+                      >
+                        <MoreVertIcon
+                          sx={{ marginLeft: "0rem", fontSize: "2.5rem" }}
+                        />
+                        <Menu
+                          id="fade-menu"
+                          MenuListProps={{
+                            "aria-labelledby": "fade-button",
+                          }}
+                          anchorEl={anchorEl}
+                          open={open}
+                          onClose={handleClose}
+                          TransitionComponent={Fade}
+                        >
+                          <MenuItem onClick={() => handleSelection(index)}>
+                            {blockList && blockList.includes(contactList[index])
+                              ? "Unblock"
+                              : "Block"}
+                          </MenuItem>
+                        </Menu>
+                      </Box>
+                    </Box>
+                  ))
+                : ""}
+            </Card>
+          </Box>
+        )}
+
+        {Loading && (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Loading size={18} />
+          </Box>
+        )}
       </Card>
       <Dialog
         open={openDialog}

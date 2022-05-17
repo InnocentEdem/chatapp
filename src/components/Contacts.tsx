@@ -60,7 +60,7 @@ function Contacts({
   showChat,
   handleMobileView
 }: {
-  contactList?: any;
+  handleSetContactsType?: any;
   fetchOneChat: any;
   setRecipientEmail: any;
   blockUser: any;
@@ -159,10 +159,7 @@ function Contacts({
   }
 
   useEffect(()=>{
-    if(contactList?.length){
-      // fetchOneChat(contactList[0])
-    }
-    handleSetContactsType("online")
+    setDisplaying(contactList)
   },[])
   // console.log(contactList,newUnread)
 

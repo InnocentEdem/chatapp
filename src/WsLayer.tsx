@@ -3,7 +3,6 @@ import ChatPageLayout from './ChatPageLayout'
 import {w3cwebsocket as W3CWebsocket } from "websocket";
 import { useAuth0 } from '@auth0/auth0-react';
 import Api from "./components/services/api"
-import useFetchMetaData from "./hooks/useFetchMetadata";
 import { Box } from '@mui/material';
 import PreAuthorization from './PreAuthorization';
 const Http = new XMLHttpRequest()

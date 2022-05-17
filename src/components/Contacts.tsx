@@ -162,6 +162,7 @@ function Contacts({
     if(contactList?.length){
       // fetchOneChat(contactList[0])
     }
+    handleSetContactsType("online")
   },[])
   // console.log(contactList,newUnread)
 

@@ -78,7 +78,7 @@ function Contacts({
   const [blockUserIndex, setBlockUserIndex] = useState<number>();
   const [modalText, setModalText] = useState({ heading: " ", text: " " });
   const [contactsType, setContactsType] = useState("online");
-  const [displaying,setDisplaying] = useState<any[]>(contactsType==="online" ? contactList : allUsers);
+  const [displaying,setDisplaying] = useState<any[]>( contactList);
   
 
   const [activeContact, setActiveContact] = useState(0);

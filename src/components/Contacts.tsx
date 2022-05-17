@@ -60,7 +60,7 @@ function Contacts({
   showChat,
   handleMobileView
 }: {
-  handleSetContactsType?: any;
+  contactList?: any;
   fetchOneChat: any;
   setRecipientEmail: any;
   blockUser: any;
@@ -78,7 +78,7 @@ function Contacts({
   const [blockUserIndex, setBlockUserIndex] = useState<number>();
   const [modalText, setModalText] = useState({ heading: " ", text: " " });
   const [contactsType, setContactsType] = useState("online");
-  const [displaying,setDisplaying] = useState<any[]>([]);
+  const [displaying,setDisplaying] = useState<any[]>(contactsType==="online" ? contactList : allUsers);
   
 
   const [activeContact, setActiveContact] = useState(0);
@@ -160,6 +160,7 @@ function Contacts({
 
   useEffect(()=>{
     setDisplaying(contactList)
+
   },[])
   // console.log(contactList,newUnread)
 
